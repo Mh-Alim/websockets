@@ -2,25 +2,19 @@ import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import { useSocket } from "./hooks/useSocket";
 
 function App() {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [latestMessage, setLatestMessage] = useState("");
   const [text, setText] = useState("");
-
+  const socket = useSocket();
   useEffect(() => {
-    const socket = new WebSocket("http://localhost:8080");
-    socket.onopen = () => {
-      console.log("socket connected");
-      setSocket(socket);
-    };
-
+    if (!socket) return;
     socket.onmessage = (message) => {
       console.log("Received Message: ", message.data);
       setLatestMessage(message.data);
     };
-  }, []);
-
+  }, [socket]);
   if (!socket) return <div>Connecting to the server</div>;
   return (
     <>
